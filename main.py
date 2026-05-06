@@ -108,4 +108,13 @@ df_customers = pd.read_sql("""
 """, conn)
 
 # ── Step 10 ────────────────────────────────────────────────────────────────
-# Employees who sold prod
+# Employees who have sold to fewer than 20 customers
+df_under_20 = pd.read_sql("""
+    SELECT e.employeeNumber, e.firstName, e.lastName,
+           COUNT(DISTINCT c.customerNumber) AS num_customers
+    FROM employees e
+    JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
+    GROUP BY e.employeeNumber
+    HAVING COUNT(DISTINCT c.customerNumber) < 20
+    ORDER BY num_customers DESC
+""", conn)
